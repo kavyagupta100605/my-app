@@ -1,4 +1,4 @@
-const {Product} = require("../model/product");
+const {Image} = require("../model/image");
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage }).single("baseImage");
 
 // CREATE brand
-exports.createproduct = (req, res) => {
+exports.createimage = (req, res) => {
   upload(req, res, async (err) => {
     if (err) {
       return res.status(500).json({ error: "Image upload failed", details: err.message });
@@ -22,31 +22,19 @@ exports.createproduct = (req, res) => {
 
     const image = req.file ? req.file.filename : "noimage.jpg";
     const {
-      productName,
-      parentCategory,
-      subCategory,
-      ssCategory,
-      description,
-      baseSize,
-      quantity,
-      price
+        pid,
+        type
     } = req.body;
 
 
     try {
-      const newproduct = await Product.create({
-      productName,
-      parentCategory,
-      subCategory,
-      ssCategory,
-      description,
-      baseSize,
-      quantity,
-      price,
+      const newimage = await Image.create({
+       pid,
+      type,
       baseImage:image
       });
 
-      res.status(201).json(newproduct);
+      res.status(201).json(newimage);
     } catch (err) {
       console.error("Error creating brand:", err);
       res.status(400).json({ error: err.message });
@@ -56,23 +44,22 @@ exports.createproduct = (req, res) => {
 
 
 // READ all categories
-exports.getproduct = async (req, res) => {
+exports.getimage = async (req, res) => {
+  
   try {
-    const products = await Product.find()
-      .populate('parentCategory', 'categoryName')  // Only fetch the 'name' field from Category
-      .populate('subCategory', 'categoryName')    // Same for subcategory
-      .populate('ssCategory', 'categoryName')    // Same for subcategory
+    const image = await Image.find({pid:req.params.id})
+      .populate('pid','productName');
     
-    res.status(200).json(products);
+    res.status(200).json(image);
   } catch (err) {
     console.error("Error fetching categories:", err);
     res.status(500).json({ error: "Failed to fetch categories" });
   }
 };
 
-exports.deleteproduct = async(req,res) => {
+exports.deleteimage = async(req,res) => {
   try{
-    await Product.findByIdAndDelete(req.params.id);
+    await Image.findByIdAndDelete(req.params.id);
     res.json({message: 'Deleted Successfully'});
   }catch(err)
   {
@@ -81,12 +68,12 @@ exports.deleteproduct = async(req,res) => {
   }
 }
 
-exports.updateproduct = async (req, res) => { 
+exports.updateimage = async (req, res) => { 
   upload(req,res,async(err)=>{
   
     
      
-      const update = await Product.findByIdAndUpdate(req.params.id, req.body, { new: 
+      const update = await Image.findByIdAndUpdate(req.params.id, req.body, { new: 
   true }); 
       res.json(update); 
   })

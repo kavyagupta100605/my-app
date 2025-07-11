@@ -57,6 +57,8 @@ const Brand = React.lazy(() => import('./views/pages/brand/brand'))
 const Offer = React.lazy(() => import('./views/pages/offer/offer'))
 const Units = React.lazy(() => import('./views/pages/units/units'))
 const Product = React.lazy(() => import('./views/pages/product/product'))
+const Image = React.lazy(() => import('./views/pages/productimage/productimage'))
+const Size = React.lazy(() => import('./views/pages/size/size'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -109,6 +111,8 @@ const routes = [
   { path: '/offer', name: 'Widgets', element: Offer },
   { path: '/units', name: 'Widgets', element: Units },
   { path: '/product', name: 'Widgets', element: Product },
+  { path: '/image/:pid', name: 'Widgets', element: Image },
+  { path: '/size/:pid', name: 'Widgets', element: Size },
   
 ]
 

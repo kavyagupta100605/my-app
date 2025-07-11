@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, } from 'react';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom';
 import { CFormSelect } from '@coreui/react';
 
 const ProductForm = () => {  
@@ -17,6 +18,7 @@ const ProductForm = () => {
   const [subCategory, setSubCategory] = useState('');
   const [ssCategory, setSSCategory] = useState('');
   const [sscatoptions,setSSCatOptions] = useState([]);
+  const navigate = useNavigate();
 
   const fetchproduct = async () => {
     try {
@@ -107,6 +109,14 @@ const ProductForm = () => {
     await axios.delete(`http://localhost:5000/product/${id}`);
     setProduct(product.filter((p) => p._id !== id));
   };
+  const handlepi = async(id) => {
+
+    navigate(`/image/${id}`);
+  }
+  const handleps = async(id) => {
+
+    navigate(`/isize/${id}`);
+  }
 
 
 const handleEdit = (p) => {
@@ -255,7 +265,10 @@ const handleEdit = (p) => {
         <th>Parent Category</th>
         <th>Sub Category</th>
         <th>Sub Sub Category</th>
-        <th>Actions</th>
+        <th>Edit</th>
+        <th>Delete</th>
+        <th>Product Image</th>
+        <th>Product Size</th>
       </tr>
     </thead>
     <tbody>
@@ -288,11 +301,29 @@ const handleEdit = (p) => {
             >
               Edit
             </button>
+            </td>
+            <td>
             <button
               className="btn btn-danger btn-sm"
               onClick={() => handleDelete(p._id)}
             >
               Delete
+            </button>
+          </td>
+          <td>
+            <button
+              className="btn btn-warning btn-sm me-2"
+              onClick={() => handlepi(p._id)}
+            >
+              Product Image
+            </button>
+          </td>
+          <td>
+            <button
+              className="btn btn-warning btn-sm me-2"
+              onClick={() => handleps(p._id)}
+            >
+              Product Size
             </button>
           </td>
         </tr>

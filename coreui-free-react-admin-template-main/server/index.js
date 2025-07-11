@@ -14,6 +14,7 @@ const brand = require("./routes/brand");
 const offer = require("./routes/offer");
 const units = require("./routes/units");
 const Product = require("./routes/product");
+const image = require("./routes/image");
 
 
 const app = express();
@@ -35,6 +36,7 @@ app.use('/offer',offer);
 app.use('/units',units);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/product',Product);
+app.use('/image',image);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
