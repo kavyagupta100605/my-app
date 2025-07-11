@@ -9,6 +9,10 @@ const ProductSchema = new mongoose.Schema({
     type: String,
 
   },
+  brand: {
+    type: String,
+
+  },
    parentCategory: {
     type: Schema.Types.ObjectId, 
     ref: 'Category', 

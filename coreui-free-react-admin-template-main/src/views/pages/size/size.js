@@ -3,63 +3,66 @@ import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { CFormSelect } from '@coreui/react';
 
-const ImageForm = () => {  
+const UnitForm = () => {  
   
-  const [baseImage, setBaseImage] = useState(null);
-  const [image, setImage] = useState([]);
+  const [unit, setUnit] = useState('');
+  const [quantity, setQuantity] = useState('');
   const [editingId , setEditingId] = useState('');  
-  const [type , setType] = useState('');
+  const [price , setPrice] = useState('');
+  const [size , setSize] = useState('');
+  const [stockQuant,setStockQuant] = useState('');
+  const [units,setUnits] = useState([]);
   const navigate = useNavigate();
 //   const [pid, setPid] = useState('');
    const {pid}= useParams();
-  const fetchImage = async () => {
+  const fetchunit = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/image/${pid}`);
-      setImage(res.data);
+      const res = await axios.get(`http://localhost:5000/size/${pid}`);
+      setUnits(res.data);
     } catch (err) {
       console.error(err);
     }
   };
   useEffect(() => {
-    fetchImage();
+    fetchunit();
 }, []);
     
-    const handleImageChange = (e) => {
-    setBaseImage(e.target.files[0]);
-    setType(e.target.files[0].name)
-  };
+    
     
 
  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const index=type.indexOf(".");
-    const final=type.slice(index+1);
-    const uploadData = new FormData();
+    const uploadData = {
     
-  uploadData.append('baseImage', baseImage);
-  uploadData.append('pid', pid);
-  uploadData.append('type',final);
+    unit,
+    quantity,
+    price,
+    size,
+    stockQuant,
+    pid,
 
-    try {
+    }
+   try {
      
          if (editingId) {
-            const res = await axios.put(`http://localhost:5000/image/${editingId}`, uploadData,
-              { headers: { 'content-type': 'multipart/form-data' }}
+            const res = await axios.put(`http://localhost:5000/size/${editingId}`, uploadData,
+              
             );
             // setCategory(category.map(parent => (parent._id === editingId ? res.data : parent)));
             setEditingId(null);
         } else {
-            const res = await axios.post('http://localhost:5000/image', uploadData);
+            const res = await axios.post('http://localhost:5000/size', uploadData);
             // setCategory([...category, res.data]);
         }
-
-      
-
-     
-      setBaseImage(null);
-      fetchImage();
+        setUnit('');
+        setQuantity('');
+        setEditingId('');  
+        setPrice('');
+        setSize('');
+        setStockQuant('');
+        fetchunit();
     } catch (err) {
       console.error(err);
     }
@@ -67,15 +70,19 @@ const ImageForm = () => {
 
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://localhost:5000/image/${id}`);
-    setImage(image.filter((i) => i._id !== id));
+    await axios.delete(`http://localhost:5000/size/${id}`);
+    setUnits(units.filter((u) => u._id !== id));
   };
 
 
-const handleEdit = (i) => {
-  setEditingId(i._id);
-  
-  setBaseImage(null); // You can keep this null as image is not re-uploaded on edit
+const handleEdit = (u) => {
+  setEditingId(u._id);
+  setUnit(u.unit);
+  setQuantity(u.quantity);  
+  setPrice(u.price);
+  setSize(u.size);
+  setStockQuant(u.stockQuant);
+   
 };
 const bp = () =>{
   navigate("/product");
@@ -84,17 +91,57 @@ const bp = () =>{
 
   return (
     <div className="card p-4 shadow w-100 mx-auto mt-5">
-      <h2 className="text-center mb-4">IMAGE</h2>
+      <h2 className="text-center mb-4">Product Size</h2>
 
    
       <form onSubmit={handleSubmit}>
         
           <div className="mb-3 col-6">
-            <label className="form-label">Base Image</label>
+            <label className="form-label">Unit</label>
             <input
-              type="file"
+              type="text"
               className="form-control"
-              onChange={handleImageChange}
+              value={unit}
+              onChange={(e) => setUnit(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3 col-6">
+            <label className="form-label">Quantity</label>
+            <input
+              type="number"
+              className="form-control"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3 col-6">
+            <label className="form-label">Price</label>
+            <input
+              type="number"
+              className="form-control"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+            />
+          </div>
+          <div className="mb-3 col-6">
+            <label className="form-label">Size</label>
+            <input
+              type="text"
+              className="form-control"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-3 col-6">
+            <label className="form-label">Stock Quantity</label>
+            <input
+              type="text"
+              className="form-control"
+              value={stockQuant}
+              onChange={(e) => setStockQuant(e.target.value)}
             />
           </div>
         
@@ -115,51 +162,44 @@ const bp = () =>{
   <table className="table table-bordered table-striped text-center align-middle shadow">
     <thead className="bg-primary text-white">
       <tr>
-        
-        <th>Base Image</th>
-        <th>Product Id</th>
-        <th>Type</th>
-        <th>Actions</th>
+        <th>Unit</th>
+        <th>Product Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Size</th>
+        <th>Stock Quantity</th>
       </tr>
     </thead>
     <tbody>
-      {image.map((i) => (
-        <tr key={i._id}>
-          <td>
-            {i.baseImage ? (
-              <img
-                src={`http://localhost:5000/uploads/${i.baseImage}`}
-                alt="Product"
-                className="img-thumbnail"
-                style={{ width: '60px', height: '60px' }}
-              />
-            ) : (
-              'No image'
-            )}
-          </td>
-          <td>{i.pid?.productName}</td>
-          <td>{i.type}</td>
+      {units.map((u) => (
+        <tr key={u._id}>
+          <td>{u.unit}</td>
+          <td>{u.pid?.productName}</td>
+          <td>{u.quantity}</td>
+          <td>{u.price}</td>
+          <td>{u.size}</td>
+          <td>{u.stockQuant}</td>
          
           <td>
             <button
               className="btn btn-warning btn-sm me-2"
-              onClick={() => handleEdit(i)}
+              onClick={() => handleEdit(u)}
             >
               Edit
             </button>
             <button
               className="btn btn-danger btn-sm"
-              onClick={() => handleDelete(i._id)}
+              onClick={() => handleDelete(u._id)}
             >
               Delete
             </button>
           </td>
         </tr>
       ))}
-      {image.length === 0 && (
+      {units.length === 0 && (
         <tr>
           <td className="py-3 text-muted" colSpan="9">
-            No Images Found
+            No Units Found
           </td>
         </tr>
       )}
@@ -172,4 +212,4 @@ const bp = () =>{
   );
 };
 
-export default ImageForm;
+export default UnitForm;

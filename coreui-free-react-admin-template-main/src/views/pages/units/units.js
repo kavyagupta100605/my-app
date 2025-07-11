@@ -72,7 +72,7 @@ const UnitsForm = () => {
 
   return (
     <div className="card p-4 shadow w-100 mx-auto mt-5">
-      <h2 className="text-center mb-4">Offer</h2>
+      <h2 className="text-center mb-4">UNIT</h2>
 
    
       <form onSubmit={handleSubmit}>

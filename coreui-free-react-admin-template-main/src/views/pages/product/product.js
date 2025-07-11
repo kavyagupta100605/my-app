@@ -18,6 +18,8 @@ const ProductForm = () => {
   const [subCategory, setSubCategory] = useState('');
   const [ssCategory, setSSCategory] = useState('');
   const [sscatoptions,setSSCatOptions] = useState([]);
+  const [brand,setBrand] = useState('');
+  const [brandoptions,setBrandOptions] = useState([]);
   const navigate = useNavigate();
 
   const fetchproduct = async () => {
@@ -30,6 +32,9 @@ const ProductForm = () => {
   };
   useEffect(() => {
     fetchproduct();
+    axios.get('http://localhost:5000/brand')
+          .then(res => setBrandOptions(res.data))
+          .catch(err => console.error(err));
     
       axios.get('http://localhost:5000/category/parent')
           .then((res) => {
@@ -38,6 +43,10 @@ const ProductForm = () => {
   })
           .catch(err => console.error(err));
       }, []);
+    const handlebrand = async(e) =>{
+        
+        
+      }
     const handlesubcat = (e) => {
      
       setParentCategory(e.target.value);
@@ -73,6 +82,7 @@ const ProductForm = () => {
     uploadData.append('parentCategory', parentCategory); 
     uploadData.append('subCategory', subCategory);     
     uploadData.append('ssCategory',ssCategory); 
+    uploadData.append('brand',brand);
 
     try {
      
@@ -98,6 +108,7 @@ const ProductForm = () => {
       setParentCategory('');
       setSubCategory('');
       setSSCategory('');
+      setBrand('');
       fetchproduct();
     } catch (err) {
       console.error(err);
@@ -115,7 +126,7 @@ const ProductForm = () => {
   }
   const handleps = async(id) => {
 
-    navigate(`/isize/${id}`);
+    navigate(`/size/${id}`);
   }
 
 
@@ -129,6 +140,7 @@ const handleEdit = (p) => {
   setParentCategory(p.parentCategory?._id || p.parentCategory || '');
   setSubCategory(p.subCategory?._id || p.subCategory || '');
   setSSCategory(p.ssCategory?._id || p.ssCategory || '');
+  setBrand(p.brand);
   setBaseImage(null); // You can keep this null as image is not re-uploaded on edit
 };
 
@@ -183,7 +195,7 @@ const handleEdit = (p) => {
           </div>
         </div>
         <div className="row">
-          <div className="mb-3 col-6">
+          <div className="mb-3 col-4">
             <label className="form-label">Quantity</label>
             <input
               type="number"
@@ -193,7 +205,7 @@ const handleEdit = (p) => {
             />
           </div>
         
-          <div className="mb-3 col-6">
+          <div className="mb-3 col-4">
             <label className="form-label">Price</label>
             <input
               type="number"
@@ -201,6 +213,19 @@ const handleEdit = (p) => {
               value={price}
               onChange={(e) => setPrice(e.target.value)}
             />
+            </div>
+          <div className="mb-3 col-4">
+            <label className="form-label">Brand</label>
+            <CFormSelect
+              value={brand}
+              onChange={(e)=>setBrand(e.target.value)}
+            >
+              <option value="">Select Brand</option>
+              {brandoptions.map((parent)=>(
+                <option key={parent._id} value={parent._id}>{parent.brandName}</option>
+              ))}
+                
+            </CFormSelect>
             </div>
         </div>
          <div className='row'>

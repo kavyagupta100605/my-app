@@ -3,24 +3,28 @@
 const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
-const ImageSchema = new mongoose.Schema({
+const SizeSchema = new mongoose.Schema({
  
-  baseImage: {
-    type: String,  
+  quantity: {
+    type: Number,  
+    
   },
   pid:{
     type: Schema.Types.ObjectId, 
     ref: 'Product', 
     required: true,
   },
-  type:{
-    type:String,
+  price:{
+    type:Number,
   },
   size:{
     type:String,
   },
-  path:{
+  unit:{
     type:String,
+  },
+  stockQuant:{
+    type:Number,
   }
 
  
@@ -28,5 +32,5 @@ const ImageSchema = new mongoose.Schema({
   timestamps: true, 
 });
 
-const Image = mongoose.model('Image',ImageSchema);
-module.exports = {Image};
+const Size = mongoose.model('Size',SizeSchema);
+module.exports = {Size};
