@@ -59,6 +59,7 @@ const Units = React.lazy(() => import('./views/pages/units/units'))
 const Product = React.lazy(() => import('./views/pages/product/product'))
 const Image = React.lazy(() => import('./views/pages/productimage/productimage'))
 const Size = React.lazy(() => import('./views/pages/size/size'))
+const PartyMaster = React.lazy(() => import('./views/pages/partymaster/partymaster'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -113,6 +114,7 @@ const routes = [
   { path: '/product', name: 'Widgets', element: Product },
   { path: '/image/:pid', name: 'Widgets', element: Image },
   { path: '/size/:pid', name: 'Widgets', element: Size },
+  { path: '/partymaster', name: 'Widgets', element: PartyMaster },
   
 ]
 

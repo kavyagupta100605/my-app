@@ -16,6 +16,7 @@ const units = require("./routes/units");
 const Product = require("./routes/product");
 const image = require("./routes/image");
 const size = require("./routes/size");
+const partymaster = require("./routes/partymaster");
 
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/product',Product);
 app.use('/image',image);
 app.use('/size',size);
+app.use('/partymaster',partymaster);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

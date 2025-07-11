@@ -440,6 +440,11 @@ const _nav = [
       },
       {
         component: CNavItem,
+        name: 'Party Master',
+        to: '/partymaster',
+      },
+      {
+        component: CNavItem,
         name: 'Product',
         to: '/product',
       },

@@ -11,6 +11,7 @@ const UnitForm = () => {
   const [price , setPrice] = useState('');
   const [size , setSize] = useState('');
   const [stockQuant,setStockQuant] = useState('');
+  const [unitoptions,setUnitOptions] = useState([]);
   const [units,setUnits] = useState([]);
   const navigate = useNavigate();
 //   const [pid, setPid] = useState('');
@@ -25,6 +26,9 @@ const UnitForm = () => {
   };
   useEffect(() => {
     fetchunit();
+    axios.get('http://localhost:5000/units')
+          .then(res => setUnitOptions(res.data))
+          .catch(err => console.error(err));
 }, []);
     
     
@@ -97,14 +101,17 @@ const bp = () =>{
       <form onSubmit={handleSubmit}>
         
           <div className="mb-3 col-6">
-            <label className="form-label">Unit</label>
-            <input
-              type="text"
-              className="form-control"
+            <label className="form-label">Units</label>
+            <CFormSelect
               value={unit}
-              onChange={(e) => setUnit(e.target.value)}
-              required
-            />
+              onChange={(e)=>setUnit(e.target.value)}
+            >
+              <option value="">Select Unit</option>
+              {unitoptions.map((parent)=>(
+                <option key={parent._id} value={parent._id}>{parent.unitName}</option>
+              ))}
+                
+            </CFormSelect>
           </div>
           <div className="mb-3 col-6">
             <label className="form-label">Quantity</label>

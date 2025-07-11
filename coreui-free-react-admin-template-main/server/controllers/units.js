@@ -30,7 +30,7 @@ exports.createunits = async (req, res) => {
 };
 
 
-exports.getunits = async (_req, res) => {
+exports.getunits = async (req, res) => {
   try {
     const unit = await Units.find();
     res.json(unit);
