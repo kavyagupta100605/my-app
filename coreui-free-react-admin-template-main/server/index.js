@@ -17,6 +17,7 @@ const Product = require("./routes/product");
 const image = require("./routes/image");
 const size = require("./routes/size");
 const partymaster = require("./routes/partymaster");
+const purchaseentry = require("./routes/purchaseentry");
 
 
 const app = express();
@@ -41,6 +42,7 @@ app.use('/product',Product);
 app.use('/image',image);
 app.use('/size',size);
 app.use('/partymaster',partymaster);
+app.use('/purchaseentry',purchaseentry);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
