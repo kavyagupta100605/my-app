@@ -5,7 +5,7 @@ const {Schema} = mongoose;
 
 const ProductSchema = new mongoose.Schema({
   
-  productName: {
+  name: {
     type: String,
 
   },

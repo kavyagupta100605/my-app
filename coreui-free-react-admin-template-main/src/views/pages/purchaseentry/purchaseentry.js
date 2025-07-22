@@ -1,70 +1,89 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { CFormSelect } from '@coreui/react';
-
+import AutocompleteSearch from '../../../AutocompleteSearch';
 const PurchaseentryForm = () => {  
   const [voucher,        setVoucher]        = useState('');
-  const [date,   setDate]     = useState('');
+  const [transtype,setTranstype] = useState('Purchase');
+  const [date,   setDate]     = useState([]);
   const [gsttype,  setGsttype]      = useState('');
   const [partyname,   setPartyname]   = useState('');
+  const [partyid,   setPartyid]   = useState('');
   const [gstno, setGstno]   = useState('')
-  const [total,setTotal]        = useState('');
-  const [dis,setDis]        = useState('');
-  const [netamt,setNetamt]        = useState('');
-  const [status,         setStatus]         = useState('');
+  const [total,setTotal]        = useState(0);
+  const [netamt,setNetamt]        = useState(0);
+  const [status,         setStatus]         = useState(1);
   const [editingId,      setEditingId]      = useState(null);
-  const [formdata, setFormdata] = useState({product: "" , quantity: "", price:"", gst: "", amount:""});  
-  
+  const [formdata, setFormdata] = useState({product: "" , quantity:0, price:0, gst: 0, amount:0, total:0});  
+  const [discount,setDiscount] = useState(0);
+  const [productoptions,setProductoptions] = useState([]);
+  const [party,setParty] = useState([]);
   const [productlist, setProductlist] = useState([]);
+  const [transaction, setTransaction] = useState([]);
 
-
-  const fetchOffers = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/offer');
-      setOffers(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => { fetchOffers(); }, []);
+  
+  useEffect(() => {
+     axios.get('http://localhost:5000/product')
+              .then(res => setProductoptions(res.data))
+              .catch(err => console.error(err));
+     axios.get('http://localhost:5000/partymaster')
+              .then(res => setParty(res.data))
+              .catch(err => console.error(err));
+        
+     
+    }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {
-      Offerid:         offerId,
-      Offertitle:      offerTitle,
-      Offercode:       offerCode,
-      Offerpercentage: offerPercent,
-      Startdate:       startDate || null,
-      Enddate:         endDate   || null,
-      Status:          status,
+       voucher,
+       date,
+       gsttype,
+       partyname,
+       amount:netamt,
+       discount,
+       status,
+       transtype,
+       partyid,
+       gstno,
+       discount
     };
-
+    console.log(payload);
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/offer/${editingId}`, payload);
+        await axios.put(`http://localhost:5000/purchaseentry/${editingId}`, payload);
         setEditingId(null);
       } else {
-        await axios.post('http://localhost:5000/offer', payload);
+        await axios.post('http://localhost:5000/purchaseentry', payload);
       }
+       await axios.post('http://localhost:5000/purchaseitems', productlist);
+      
 
-
-      setOfferId('');
-      setOfferTitle('');
-      setOfferCode('');
-      setOfferPercent('');
-      setStartDate('');
-      setEndDate('');
-      setStatus('');
-      fetchOffers();
+      setVoucher(''),
+       setDate(''),
+       setGsttype(''),
+       setParty(''),
+       setDiscount('')
+      
     } catch (err) {
       console.error(err);
     }
   };
 
-
+const handleAutodata = (from, selectedItem) => {
+  if (from === 'party') {
+    setPartyname(selectedItem.name);
+    setGstno(selectedItem.gstno); // for example
+    setPartyid(selectedItem._id);
+  } else if (from === 'product') {
+    setFormdata((prev) => ({
+      ...prev,
+      product: selectedItem.name,
+      productId: selectedItem._id,
+    }));
+  }
+};
 //   const handleDelete = async (id) => {
 //     await axios.delete(`http://localhost:5000/offer/${id}`);
 //     setOffers(offers.filter((o) => o._id !== id));
@@ -83,18 +102,30 @@ const PurchaseentryForm = () => {
 //   };
   const handleamount = (e) => {
     const gstt=parseInt(formdata.gst)
-    const pricee = parseInt(formdata.price)
-   
-    const amt=(pricee+((pricee*gstt)/100));
+    const pricee = (formdata.price)
+    const qty = (formdata.quantity);
+    const total=qty*pricee;
+    const amt=(total+((total*gstt)/100));
     // console.log(amt);
     setFormdata({...formdata,amount:amt});
   }
+  const handlenetamt = () => {
+
+    const neta=formdata.total-((formdata.total*discount)/100);
+    console.log(neta);
+    setNetamt(neta);
+  }
   const handlechange = (e) => {
     setFormdata({...formdata,[e.target.name]:e.target.value})
+     
   }
   const handleadd = () => {
     setProductlist([...productlist,formdata]);
-    setFormdata({product: "" , quantity: "", price:"", gst: "", amount:""});
+    const amountz=formdata.amount;
+    console.log(amountz)
+    // setTotal(formdata.amount)
+    //  setFormdata({ ...formdata, total: (formdata.total+amountz) });
+    setFormdata({product: "" , quantity: 0, price:0, gst:0, amount:0,total: (formdata.total+amountz) });
   }
 
   return (
@@ -135,15 +166,11 @@ const PurchaseentryForm = () => {
         </div>
 
         <div className="row">
-          <div className="mb-3 col-6">
-            <label className="form-label">Party Name</label>
-            <input
-              type="text"
-              className="form-control"
-              value={partyname}
-              onChange={(e) => setPartyname(e.target.value)}
-            />
-          </div>
+          <div className="mb-5 col-6">
+              <label className="form-label">Party Name</label>
+              <AutocompleteSearch data={party} getValue={(data) => handleAutodata('party', data)} />
+            </div>
+        
           <div className="mb-3 col-6">
             <label className="form-label">GST No</label>
             <input
@@ -155,18 +182,11 @@ const PurchaseentryForm = () => {
           </div>
         </div>
         <div className='row'>
-          <div className="mb-3 col-2">
-            <label className="form-label">Product</label>
-            <input
-              type="text"
-              className="form-control"
-              name='product'
-              value={formdata.product}
-              onChange={handlechange}
-            />
-          </div>
+          <div className="mb-5 col-2">
+              <label className="form-label">Product</label>
+              <AutocompleteSearch data={productoptions} getValue={(data) => handleAutodata('product', data)} />
+            </div>
         
-
         <div className="mb-3 col-2">
           <label className="form-label">Quantity</label>
             <input
@@ -194,9 +214,9 @@ const PurchaseentryForm = () => {
             onChange={handlechange}
             name='gst'
           >
-            <option value="">Select</option>
-            <option value="10">10%</option>
-            <option value="15">15%</option>
+            <option value={0}>Select</option>
+            <option value={10}>10%</option>
+            <option value={15}>15%</option>
           </CFormSelect>
           </div>
           <div className="mb-3 col-2">
@@ -210,15 +230,19 @@ const PurchaseentryForm = () => {
               onClick={handleamount}
             />
           </div>
+           <div className="mb-3 col-2">
+            <button type="button" className="btn btn-success mt-4" 
+            onClick={handleadd}>
+               ADD
+            </button>
+          </div>
+          
         </div>
 
-        <button type="submit" className="btn btn-success m-3">
+        <button type="submit" className="btn btn-success m-3" onClick={handleSubmit}>
           {editingId ? 'Update' : 'Submit'}
         </button>
-        <button type="btn" className="btn btn-success m-3" 
-        onClick={handleadd}>
-          ADD
-        </button>
+        
       </form>
 
       <div className="table-responsive">
@@ -251,6 +275,46 @@ const PurchaseentryForm = () => {
                 )}
           </tbody>
         </table>
+        <div className='row'>
+          <div className='col-8'></div>
+          <label className="col-2 col-form-label text-end">TOTAL</label>
+          <div className="mb-3 col-2">
+              
+              <input
+                type="number"
+                className="form-control"
+                name='total'
+                value={formdata.total}
+              />
+            </div>
+          </div>
+          <div className='row'>
+          <div className='col-8 mb-3'></div>
+           <label className="col-2 col-form-label text-end">Discount</label>
+          <div className="mb-3 col-2">
+             
+              <input
+                type="number"
+                className="form-control"
+                value={discount}
+                onChange={(e)=>setDiscount(e.target.value)}
+              />
+            </div>
+          </div>
+          <div className='row'>
+             <div className='col-8'></div>
+            
+             <label className="col-2 col-form-label text-end">Net Total</label>
+            <div className=" col-2">
+               
+                <input
+                  type="number"
+                  className="form-control"
+                  value={netamt}
+                  onClick={handlenetamt}
+                />
+              </div>
+          </div>
       </div>
     </div>
   );

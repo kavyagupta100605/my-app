@@ -14,6 +14,15 @@ const PurchaseEntrySchema = new mongoose.Schema({
   gsttype: {
     type: String, 
   },
+  gstno: {
+    type: Number, 
+  },
+  discount: {
+    type: Number, 
+  },
+  partyname: {
+    type: String, 
+  },
   partyid: {
     type: String, 
   },

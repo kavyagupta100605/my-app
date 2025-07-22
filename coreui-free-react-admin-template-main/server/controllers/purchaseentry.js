@@ -15,11 +15,13 @@ exports.createpurchaseentry = async(req, res) => {
        voucher,
        date,
        gsttype,
+       partyname,
        partyid,
        amount,
        discount,
        status,
-       transtype
+       transtype,
+       gstno
     } = req.body;
 
 
@@ -28,11 +30,13 @@ exports.createpurchaseentry = async(req, res) => {
         voucher,
        date,
        gsttype,
+       partyname,
        partyid,
        amount,
        discount,
        status,
-       transtype
+       transtype,
+       gstno
       });
 
       res.status(201).json(newPurchaseEntry);

@@ -35,9 +35,11 @@
     "core-js": "^3.40.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
+    "react-autosuggest": "^10.1.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
+    "react-suggest": "^0.0.1",
     "redux": "5.0.1",
     "simplebar-react": "^3.3.0"
   },

@@ -22,7 +22,7 @@ exports.createproduct = (req, res) => {
 
     const image = req.file ? req.file.filename : "noimage.jpg";
     const {
-      productName,
+      name,
       parentCategory,
       subCategory,
       ssCategory,
@@ -35,7 +35,7 @@ exports.createproduct = (req, res) => {
 
     try {
       const newproduct = await Product.create({
-      productName,
+      name,
       parentCategory,
       subCategory,
       ssCategory,

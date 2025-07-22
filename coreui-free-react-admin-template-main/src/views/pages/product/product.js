@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import { CFormSelect } from '@coreui/react';
 
 const ProductForm = () => {  
-  const [productName, setProductName] = useState('');
+  const [name, setProductName] = useState('');
   const [description, setDescription] = useState('');
   const [baseImage, setBaseImage] = useState(null);
   const [baseSize, setBaseSize] = useState('');
@@ -73,7 +73,7 @@ const ProductForm = () => {
     e.preventDefault();
 
     const uploadData = new FormData();
-    uploadData.append('productName', productName);
+    uploadData.append('name', name);
     uploadData.append('description', description);
     uploadData.append('baseImage', baseImage);
     uploadData.append('baseSize', baseSize);
@@ -132,7 +132,7 @@ const ProductForm = () => {
 
 const handleEdit = (p) => {
   setEditingId(p._id);
-  setProductName(p.productName || '');
+  setProductName(p.name || '');
   setDescription(p.description || '');
   setBaseSize(p.baseSize || '');
   setQuantity(p.quantity || '');
@@ -148,6 +148,7 @@ const handleEdit = (p) => {
   return (
     <div className="card p-4 shadow w-100 mx-auto mt-5">
       <h2 className="text-center mb-4">PRODUCT</h2>
+    
 
    
       <form onSubmit={handleSubmit}>
@@ -157,7 +158,7 @@ const handleEdit = (p) => {
             <input
               type="text"
               className="form-control"
-              value={productName}
+              value={name}
               onChange={(e) => setProductName(e.target.value)}
               required
             />
@@ -299,7 +300,7 @@ const handleEdit = (p) => {
     <tbody>
       {product.map((p) => (
         <tr key={p._id}>
-          <td>{p.productName}</td>
+          <td>{p.name}</td>
           <td>{p.description}</td>
           <td>
             {p.baseImage ? (
