@@ -46,8 +46,7 @@ const PurchaseentryForm = () => {
        status,
        transtype,
        partyid,
-       gstno,
-       discount
+       gstno
     };
     console.log(payload);
     try {
